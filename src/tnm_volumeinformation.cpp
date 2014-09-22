@@ -104,9 +104,25 @@ void TNMVolumeInformation::process() {
 		//
 		// Standard deviation
 		//
-		float stdDeviation = -1.f;
+		float stdDeviation = .0f;
 		// Compute the standard deviation
 
+		size_t jX = max(iX -1, 0);
+		size_t jY = max(iY -1, 0);
+		size_t jZ = max(iZ -1, 0);
+		
+		for (; jX < topX; jX++) {
+		    for (; jY < topY; jY++) {
+			for (; jZ < topZ; jZ++) {
+			    stdDeviation += pow((VolumeUInt16::voxel(jX, jY, jZ) - average), 2);
+			}
+		    }
+		}
+		
+		stdDeviation -= pow(intensity - average), 2);
+		stdDeviation /= 26;
+		
+		stdDeviation = sqrt(stdDeviation);
 
 		_data->at(i).dataValues[2] = stdDeviation;
 
@@ -118,6 +134,21 @@ void TNMVolumeInformation::process() {
 		// calculation and then take the magnitude (=length) of the vector.
 		// Hint:  tgt::vec3 is a class that can calculate the length for you
 
+		size_t prevX = max(iX -1, 0);
+		size_t prevY = max(iY -1, 0);
+		size_t prevZ = max(iZ -1, 0);
+		
+		tgt::vec3 gradient = tgt::vec3(.0f);
+		
+		gradient.x = VolumeUInt16::voxel(topX, iY, iZ) - VolumeUInt16::voxel(prevX, iY, iZ);
+		gradient.y = VolumeUInt16::voxel(iX, topY, iZ) - VolumeUInt16::voxel(iX, prevY, iZ);
+		gradient.z = VolumeUInt16::voxel(iX, iY, topZ) - VolumeUInt16::voxel(iX, iY, prevZ);
+		
+		gradient.x /= 2;
+		gradient.y /= 2;
+		gradient.z /= 2;
+		
+		float gradientMagnitude = gradient.length();
 
 		_data->at(i).dataValues[3] = gradientMagnitude;
 	    }
