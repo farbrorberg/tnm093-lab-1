@@ -47,8 +47,8 @@ uniform sampler1D transferFunc_;
 
 vec3 calculateGradient(in vec3 samplePosition) {
     const vec3 h = volumeStruct_.datasetDimensionsRCP_;
-    // Implement central differences
-    vec3 gradient = vec3(0.0);
+    
+    // calculate central differences
     
     vec3 xp = samplePosition + vec3(h.x, 0, 0);
     vec3 xm = samplePosition - vec3(h.x, 0, 0);
@@ -62,7 +62,7 @@ vec3 calculateGradient(in vec3 samplePosition) {
     vec3 zm = samplePosition - vec3(0, 0, h.z);
     float z = texture(volumeStruct_.volume_, zp).a - texture(volumeStruct_.volume_, zm).a;
 
-    gradient = vec3(x, y, z);
+    vec3 gradient = vec3(x, y, z);
     
     gradient *= 1/(2*h);
     
@@ -70,21 +70,22 @@ vec3 calculateGradient(in vec3 samplePosition) {
 }
 
 vec3 applyPhongShading(in vec3 pos, in vec3 gradient, in vec3 ka, in vec3 kd, in vec3 ks) {
-    vec3 L = normalize(lightSource_.position_ - pos);
-    vec3 V = normalize(cameraPosition_ - pos);
-    vec3 R = normalize(V + L);
+    vec3 lightVector = normalize(lightSource_.position_ - pos);
+    vec3 cameraVector = normalize(cameraPosition_ - pos);
+    vec3 specularDirection = normalize(cameraVector + lightVector);
+    vec3 reflectance = normalize(2 * min(max(dot(lightVector, gradient), 0), 1)*gradient - lightVector);
 
     vec3 shadedColor = vec3(0.0);
 
-    float diffuseFactor = max(dot(gradient, L), 0.0);
-    float specularFactor = pow(max(dot(gradient, R), 0.0), shininess_);
+    float diffuseFactor = min(max(dot(gradient, lightVector), 0), 1);
+    float specularFactor = pow(min(max(dot(gradient, specularDirection), 0), 1), shininess_);
+    //float specularFactor = pow(min(max(dot(cameraVector, reflectance), 0), 1), shininess_);
 
-    // diffuse
-    shadedColor += ka * lightSource_.ambientColor_;
+    shadedColor += min(max(ka * lightSource_.ambientColor_, 0), 1);
     shadedColor += kd * lightSource_.diffuseColor_ * diffuseFactor;
     shadedColor += ks * lightSource_.specularColor_ * specularFactor;
 
-    return shadedColor;
+    return (shadedColor);
 }
 void rayTraversal(in vec3 first, in vec3 last) {
     // calculate the required ray parameters
