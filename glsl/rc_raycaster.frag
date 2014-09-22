@@ -62,25 +62,9 @@ vec3 calculateGradient(in vec3 samplePosition) {
     vec3 zm = samplePosition - vec3(0, 0, h.z);
     float z = texture(volumeStruct_.volume_, zp).a - texture(volumeStruct_.volume_, zm).a;
 
-    //vec3 x_plus = vec3(samplePosition.x+h.x, samplePosition.y, samplePosition.z);
-    //vec3 x_minus = vec3(samplePosition.x-h.x, samplePosition.y, samplePosition.z);
-    //float x = texture(volumeStruct_.volume_, x_plus).a - texture(volumeStruct_.volume_, x_minus).a;
-    
-    //vec3 y_plus = vec3(samplePosition.x, samplePosition.y+h.y, samplePosition.z);
-    //vec3 y_minus = vec3(samplePosition.x, samplePosition.y-h.y, samplePosition.z);
-    //float y = texture(volumeStruct_.volume_, y_plus).a - texture(volumeStruct_.volume_, y_minus).a;
-    
-    //vec3 z_plus = vec3(samplePosition.x, samplePosition.y, samplePosition.z+h.z);
-    //vec3 z_minus = vec3(samplePosition.x, samplePosition.y, samplePosition.z-h.z);
-    //float z = texture(volumeStruct_.volume_, z_plus).a - texture(volumeStruct_.volume_, z_minus).a;
-    
     gradient = vec3(x, y, z);
     
     gradient *= 1/(2*h);
-    
-    //gradient.x = (1/(2*h.x))*x;
-    //gradient.y = (1/(2*h.y))*y;
-    //gradient.z = (1/(2*h.z))*z;
     
     return normalize(gradient);
 }
