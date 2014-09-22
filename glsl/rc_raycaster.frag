@@ -73,7 +73,7 @@ vec3 applyPhongShading(in vec3 pos, in vec3 gradient, in vec3 ka, in vec3 kd, in
     vec3 lightVector = normalize(lightSource_.position_ - pos);
     vec3 cameraVector = normalize(cameraPosition_ - pos);
     vec3 specularDirection = normalize(cameraVector + lightVector);
-    vec3 reflectance = normalize(2 * min(max(dot(lightVector, gradient), 0), 1)*gradient - lightVector);
+    //vec3 reflectance = normalize(2 * min(max(dot(lightVector, gradient), 0), 1)*gradient - lightVector);
 
     vec3 shadedColor = vec3(0.0);
 
