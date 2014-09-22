@@ -78,13 +78,13 @@ void TNMVolumeInformation::process() {
 		// as well as three parameters
 		float average = .0f;
 		
-		size_t jX = max(iX -1, 0);
-		size_t jY = max(iY -1, 0);
-		size_t jZ = max(iZ -1, 0);
+		size_t jX = std::max(iX -1, 0);
+		size_t jY = std::max(iY -1, 0);
+		size_t jZ = std::max(iZ -1, 0);
 		
-		size_t topX = min(iX + 1, dimensions.x);
-		size_t topY = min(iY + 1, dimensions.y);
-		size_t topZ = min(iZ + 1, dimensions.z);
+		size_t topX = std::min(iX + 1, dimensions.x);
+		size_t topY = std::min(iY + 1, dimensions.y);
+		size_t topZ = std::min(iZ + 1, dimensions.z);
 		
 		for (; jX < topX; jX++) {
 		    for (; jY < topY; jY++) {
@@ -107,22 +107,22 @@ void TNMVolumeInformation::process() {
 		float stdDeviation = .0f;
 		// Compute the standard deviation
 
-		size_t jX = max(iX -1, 0);
-		size_t jY = max(iY -1, 0);
-		size_t jZ = max(iZ -1, 0);
+		size_t jX = std::max(iX -1, 0);
+		size_t jY = std::max(iY -1, 0);
+		size_t jZ = std::max(iZ -1, 0);
 		
 		for (; jX < topX; jX++) {
 		    for (; jY < topY; jY++) {
 			for (; jZ < topZ; jZ++) {
-			    stdDeviation += pow((VolumeUInt16::voxel(jX, jY, jZ) - average), 2);
+			    stdDeviation += std::pow((VolumeUInt16::voxel(jX, jY, jZ) - average), 2);
 			}
 		    }
 		}
 		
-		stdDeviation -= pow(intensity - average), 2);
+		stdDeviation -= std::pow(intensity - average), 2);
 		stdDeviation /= 26;
 		
-		stdDeviation = sqrt(stdDeviation);
+		stdDeviation = std::sqrt(stdDeviation);
 
 		_data->at(i).dataValues[2] = stdDeviation;
 
@@ -134,9 +134,9 @@ void TNMVolumeInformation::process() {
 		// calculation and then take the magnitude (=length) of the vector.
 		// Hint:  tgt::vec3 is a class that can calculate the length for you
 
-		size_t prevX = max(iX -1, 0);
-		size_t prevY = max(iY -1, 0);
-		size_t prevZ = max(iZ -1, 0);
+		size_t prevX = std::max(iX -1, 0);
+		size_t prevY = std::max(iY -1, 0);
+		size_t prevZ = std::max(iZ -1, 0);
 		
 		tgt::vec3 gradient = tgt::vec3(.0f);
 		

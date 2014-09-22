@@ -1,6 +1,9 @@
 #ifndef VRN_TNM_VOLUMEINFORMATION_H
 #define VRN_TNM_VOLUMEINFORMATION_H
 
+#include <algorithm>
+#include <cmath>
+
 #include "voreen/core/processors/processor.h"
 #include "modules/tnm093/include/tnm_common.h"
 
