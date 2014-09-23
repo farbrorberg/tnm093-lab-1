@@ -83,10 +83,11 @@ void TNMVolumeInformation::process() {
 		// as well as three parameters
 		float average = .0f;
 		
+		int count = 0;
 		
-		int jX = std::max(iX -1, 0);
-		int jY = std::max(iY -1, 0);
-		int jZ = std::max(iZ -1, 0);
+		int jX = std::max(iX - 1, 0);
+		int jY = std::max(iY - 1, 0);
+		int jZ = std::max(iZ - 1, 0);
 		
 		int topX = std::min(iX + 1, (dim_x-1));
 		int topY = std::min(iY + 1, (dim_y-1));
@@ -96,14 +97,12 @@ void TNMVolumeInformation::process() {
 		    for (; jY < topY; jY++) {
 			for (; jZ < topZ; jZ++) {
 			    average += volume->voxel(jX, jY, jZ);
+			    count++;
 			}
 		    }
 		}
 		
-		// remove the value in the middle
-		average -= intensity;
-		// 3*3*3 - 1 = 26
-		average /= 26;
+		average /= count;
 
 		_data->at(i).dataValues[1] = average;
 
@@ -125,8 +124,8 @@ void TNMVolumeInformation::process() {
 		    }
 		}
 		
-		stdDeviation -= std::pow(intensity - average, 2);
-		stdDeviation /= 26;
+// 		stdDeviation -= std::pow(intensity - average, 2);
+		stdDeviation /= count;
 		
 		stdDeviation = std::sqrt(stdDeviation);
 

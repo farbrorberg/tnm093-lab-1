@@ -10,6 +10,11 @@
         </VolumeContainer>
         <ProcessorNetwork version="11">
             <MetaData>
+                <MetaItem name="ProcessorSelection" type="SelectionMetaData::Processor">
+                    <values>
+                        <item type="TNMScatterPlot" ref="ref4" />
+                    </values>
+                </MetaItem>
                 <MetaItem name="Zoom" type="ZoomMetaData">
                     <transform.row0 x="1.1250002384185791" y="0" z="0" />
                     <transform.row1 x="0" y="1.1250002384185791" z="0" />
@@ -38,7 +43,7 @@
                 <Processor type="Canvas" name="Canvas" id="ref1">
                     <MetaData>
                         <MetaItem name="ProcessorGraphicsItem" type="PositionMetaData" x="-150" y="261" />
-                        <MetaItem name="ProcessorWidget" type="WindowStateMetaData" visible="true" x="283" y="134" width="536" height="525" />
+                        <MetaItem name="ProcessorWidget" type="WindowStateMetaData" visible="true" x="835" y="243" width="536" height="525" />
                     </MetaData>
                     <Properties>
                         <Property name="canvasSize">
@@ -67,9 +72,9 @@
                     </MetaData>
                     <Properties>
                         <Property name="brushingIndices" id="ref45" />
-                        <Property name="firstAxis" value="0" />
+                        <Property name="firstAxis" value="1" />
                         <Property name="linkingIndices" id="ref43" />
-                        <Property name="secondAxis" value="0" />
+                        <Property name="secondAxis" value="2" />
                     </Properties>
                     <InteractionHandlers />
                 </Processor>
@@ -174,7 +179,7 @@
                         <Property name="mouseEvent.cursorPositionMove" lod="1" enabled="true" mouseAction="1" mouseButtons="0" keyCode="0" modifier="0" shareEvents="true" />
                         <Property name="mouseEvent.cursorPositionPress" lod="1" enabled="true" mouseAction="19" mouseButtons="3" keyCode="0" modifier="0" shareEvents="true" />
                         <Property name="mousePositionProperty">
-                            <value x="0.68819964" y="-0.96061361" z="0.12280703" />
+                            <value x="0.0736357" y="-0.88184077" z="0.12280703" />
                         </Property>
                         <Property name="numSlicesPerCol" value="1" />
                         <Property name="numSlicesPerRow" value="1" />
