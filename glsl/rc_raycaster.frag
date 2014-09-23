@@ -110,9 +110,11 @@ void rayTraversal(in vec3 first, in vec3 last) {
         
         // if opacity greater zero, apply compositing
         if (color.a > 0.0) {
+        
+        
             color.a = 1.0 - pow(1.0 - color.a, samplingStepSize_ * SAMPLING_BASE_INTERVAL_RCP);
             // Insert your front-to-back alpha compositing code here
-            result.rgb = (1.0 - result.a) * color.rgb + result.rgb * result.a;
+            result.rgb = (1.0 - result.a) * color.rgb * color.a + result.rgb;
             result.a = (1.0 - result.a) * color.a + result.a;
         }
 
