@@ -47,13 +47,18 @@ void TNMVolumeInformation::process() {
     const tgt::svec3 dimensions = volume->getDimensions();
     // Create as many data entries as there are voxels in the volume
     _data->resize(dimensions.x * dimensions.y * dimensions.z);
+    
+    size_t zero = 0;
+    int dim_x = dimensions.x;
+    int dim_y = dimensions.y;
+    int dim_z = dimensions.z;
 
     // iX is the index running over the 'x' dimension
     // iY is the index running over the 'y' dimension
     // iZ is the index running over the 'z' dimension
-    for (size_t iX = 0; iX < dimensions.x; ++iX) {
-	for (size_t iY = 0; iY < dimensions.y; ++iY) {
-	    for (size_t iZ = 0; iZ < dimensions.z; ++iZ) {
+    for (int iX = 0; iX < dim_x; ++iX) {
+	for (int iY = 0; iY < dim_y; ++iY) {
+	    for (int iZ = 0; iZ < dim_z; ++iZ) {
 		// i is a unique identifier for the voxel calculated by the following
 		// (probably one of the most important) formulas:
 		// iZ*dimensions.x*dimensions.y + iY*dimensions.x + iX;
@@ -67,7 +72,7 @@ void TNMVolumeInformation::process() {
 		// Intensity
 		//
 		// Retrieve the intensity using the 'VolumeUInt16's voxel method
-		float intensity = VolumeUInt16::voxel(_data->at(i).voxelIndex);
+		float intensity = volume->voxel(_data->at(i).voxelIndex);
 
 		_data->at(i).dataValues[0] = intensity;
 
@@ -78,18 +83,19 @@ void TNMVolumeInformation::process() {
 		// as well as three parameters
 		float average = .0f;
 		
-		size_t jX = std::max(iX -1, 0);
-		size_t jY = std::max(iY -1, 0);
-		size_t jZ = std::max(iZ -1, 0);
 		
-		size_t topX = std::min(iX + 1, dimensions.x);
-		size_t topY = std::min(iY + 1, dimensions.y);
-		size_t topZ = std::min(iZ + 1, dimensions.z);
+		int jX = std::max(iX -1, 0);
+		int jY = std::max(iY -1, 0);
+		int jZ = std::max(iZ -1, 0);
+		
+		int topX = std::min(iX + 1, (dim_x-1));
+		int topY = std::min(iY + 1, (dim_y-1));
+		int topZ = std::min(iZ + 1, (dim_z-1));
 		
 		for (; jX < topX; jX++) {
 		    for (; jY < topY; jY++) {
 			for (; jZ < topZ; jZ++) {
-			    average += VolumeUInt16::voxel(jX, jY, jZ);
+			    average += volume->voxel(jX, jY, jZ);
 			}
 		    }
 		}
@@ -107,19 +113,19 @@ void TNMVolumeInformation::process() {
 		float stdDeviation = .0f;
 		// Compute the standard deviation
 
-		size_t jX = std::max(iX -1, 0);
-		size_t jY = std::max(iY -1, 0);
-		size_t jZ = std::max(iZ -1, 0);
+		jX = std::max(iX -1, 0);
+		jY = std::max(iY -1, 0);
+		jZ = std::max(iZ -1, 0);
 		
 		for (; jX < topX; jX++) {
 		    for (; jY < topY; jY++) {
 			for (; jZ < topZ; jZ++) {
-			    stdDeviation += std::pow((VolumeUInt16::voxel(jX, jY, jZ) - average), 2);
+			    stdDeviation += std::pow((volume->voxel(jX, jY, jZ) - average), 2);
 			}
 		    }
 		}
 		
-		stdDeviation -= std::pow(intensity - average), 2);
+		stdDeviation -= std::pow(intensity - average, 2);
 		stdDeviation /= 26;
 		
 		stdDeviation = std::sqrt(stdDeviation);
@@ -129,27 +135,27 @@ void TNMVolumeInformation::process() {
 		//
 		// Gradient magnitude
 		//
-		float gradientMagnitude = -1.f;
 		// Compute the gradient direction using either forward, central, or backward
 		// calculation and then take the magnitude (=length) of the vector.
 		// Hint:  tgt::vec3 is a class that can calculate the length for you
 
-		size_t prevX = std::max(iX -1, 0);
-		size_t prevY = std::max(iY -1, 0);
-		size_t prevZ = std::max(iZ -1, 0);
+		int prevX = std::max(iX -1, 0);
+		int prevY = std::max(iY -1, 0);
+		int prevZ = std::max(iZ -1, 0);
 		
 		tgt::vec3 gradient = tgt::vec3(.0f);
 		
-		gradient.x = VolumeUInt16::voxel(topX, iY, iZ) - VolumeUInt16::voxel(prevX, iY, iZ);
-		gradient.y = VolumeUInt16::voxel(iX, topY, iZ) - VolumeUInt16::voxel(iX, prevY, iZ);
-		gradient.z = VolumeUInt16::voxel(iX, iY, topZ) - VolumeUInt16::voxel(iX, iY, prevZ);
+		gradient.x = volume->voxel(topX, iY, iZ) - volume->voxel(prevX, iY, iZ);
+		gradient.y = volume->voxel(iX, topY, iZ) - volume->voxel(iX, prevY, iZ);
+		gradient.z = volume->voxel(iX, iY, topZ) - volume->voxel(iX, iY, prevZ);
 		
 		gradient.x /= 2;
 		gradient.y /= 2;
 		gradient.z /= 2;
 		
-		float gradientMagnitude = gradient.length();
-
+		// is .size on tgt::vec3 correct? NO 
+		float gradientMagnitude = tgt::length(gradient);
+		
 		_data->at(i).dataValues[3] = gradientMagnitude;
 	    }
 	}
