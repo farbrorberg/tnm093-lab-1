@@ -48,7 +48,6 @@ void TNMVolumeInformation::process() {
     // Create as many data entries as there are voxels in the volume
     _data->resize(dimensions.x * dimensions.y * dimensions.z);
     
-    size_t zero = 0;
     int dim_x = dimensions.x;
     int dim_y = dimensions.y;
     int dim_z = dimensions.z;
@@ -84,18 +83,14 @@ void TNMVolumeInformation::process() {
 		float average = .0f;
 		
 		int count = 0;
-		
-		int jX = std::max(iX - 1, 0);
-		int jY = std::max(iY - 1, 0);
-		int jZ = std::max(iZ - 1, 0);
-		
+				
 		int topX = std::min(iX + 1, (dim_x-1));
 		int topY = std::min(iY + 1, (dim_y-1));
 		int topZ = std::min(iZ + 1, (dim_z-1));
 		
-		for (; jX < topX; jX++) {
-		    for (; jY < topY; jY++) {
-			for (; jZ < topZ; jZ++) {
+		for (int jX = std::max(iX - 1, 0); jX < topX; jX++) {
+		    for (int jY = std::max(iY - 1, 0); jY < topY; jY++) {
+			for (int jZ = std::max(iZ - 1, 0); jZ < topZ; jZ++) {
 			    average += volume->voxel(jX, jY, jZ);
 			    count++;
 			}
@@ -112,13 +107,10 @@ void TNMVolumeInformation::process() {
 		float stdDeviation = .0f;
 		// Compute the standard deviation
 
-		jX = std::max(iX -1, 0);
-		jY = std::max(iY -1, 0);
-		jZ = std::max(iZ -1, 0);
 		
-		for (; jX < topX; jX++) {
-		    for (; jY < topY; jY++) {
-			for (; jZ < topZ; jZ++) {
+		for (int jX = std::max(iX -1, 0); jX < topX; jX++) {
+		    for (int jY = std::max(iY -1, 0); jY < topY; jY++) {
+			for (int jZ = std::max(iZ -1, 0); jZ < topZ; jZ++) {
 			    stdDeviation += std::pow((volume->voxel(jX, jY, jZ) - average), 2);
 			}
 		    }
