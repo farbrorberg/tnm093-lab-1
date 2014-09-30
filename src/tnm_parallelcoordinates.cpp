@@ -181,9 +181,33 @@ void TNMParallelCoordinates::handleMouseRelease(tgt::MouseEvent* e) {
 
 void TNMParallelCoordinates::renderLines() {
 	//
-    // Implement your line drawing
+	// Implement your line drawing
 	//
-
+  const Data& data = *(_inport.getData());
+  
+  float x_width = 2.0f / (NUM_DATA_VALUES - 1);
+  
+  float max_values[NUM_DATA_VALUES] = {0.0f};
+  
+  for (int i = 0; i < (int) data.size(); i++) {
+    for (int k = 0; k < NUM_DATA_VALUES; k++) {
+      max_values[k] = std::max(max_values[k], data.at(i).dataValues[k]);
+    }
+  }
+  
+  for (int i = 0; i < (int) data.size(); i++) {
+    glBegin(GL_LINE_STRIP);
+    
+      float x_pos = -1.0f;
+      
+      for (int k = 0; k < NUM_DATA_VALUES; k++) {
+	glVertex2f(x_pos, ((data.at(i).dataValues[k]/max_values[k])-0.5f)*2);
+	//glColor4f(0.0f, 0.0f, 1.0f, 0.01f);
+	x_pos += x_width;
+      }
+    
+    glEnd();
+  }
 }
 
 void TNMParallelCoordinates::renderLinesPicking() {

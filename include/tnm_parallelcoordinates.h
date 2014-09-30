@@ -74,7 +74,10 @@ protected:
 
 		// Renders the handle at the current position using the encoded picking color
         void renderPicking() const;
-        
+
+		// The current position of the handle
+        tgt::vec2 _position;
+	
     private:
 		// The internal method that gets called by both render() and renderPicking() methods
         void renderInternal() const;
@@ -84,9 +87,6 @@ protected:
 
 		// The unique index of the handle
         int _index;
-
-		// The current position of the handle
-        tgt::vec2 _position;
     };
 
 private:

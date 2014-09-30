@@ -12,7 +12,7 @@
             <MetaData>
                 <MetaItem name="ProcessorSelection" type="SelectionMetaData::Processor">
                     <values>
-                        <item type="TNMScatterPlot" ref="ref4" />
+                        <item type="TNMParallelCoordinates" ref="ref2" />
                     </values>
                 </MetaItem>
                 <MetaItem name="Zoom" type="ZoomMetaData">
@@ -43,7 +43,7 @@
                 <Processor type="Canvas" name="Canvas" id="ref1">
                     <MetaData>
                         <MetaItem name="ProcessorGraphicsItem" type="PositionMetaData" x="-150" y="261" />
-                        <MetaItem name="ProcessorWidget" type="WindowStateMetaData" visible="true" x="835" y="243" width="536" height="525" />
+                        <MetaItem name="ProcessorWidget" type="WindowStateMetaData" visible="true" x="1335" y="356" width="536" height="525" />
                     </MetaData>
                     <Properties>
                         <Property name="canvasSize">
@@ -158,7 +158,7 @@
                             <value x="1" y="1" z="1" w="1" />
                         </Property>
                         <Property name="maximizeOnDoubleClick" value="true" />
-                        <Property name="maximized" value="0" />
+                        <Property name="maximized" value="1" />
                         <Property name="mouseEvent.maximize" lod="1" enabled="true" mouseAction="8" mouseButtons="1" keyCode="0" modifier="0" shareEvents="false" />
                         <Property name="mouseEvent.move" lod="1" enabled="true" mouseAction="103" mouseButtons="0" keyCode="0" modifier="0" shareEvents="false" />
                         <Property name="showGrid" value="true" />
@@ -179,7 +179,7 @@
                         <Property name="mouseEvent.cursorPositionMove" lod="1" enabled="true" mouseAction="1" mouseButtons="0" keyCode="0" modifier="0" shareEvents="true" />
                         <Property name="mouseEvent.cursorPositionPress" lod="1" enabled="true" mouseAction="19" mouseButtons="3" keyCode="0" modifier="0" shareEvents="true" />
                         <Property name="mousePositionProperty">
-                            <value x="0.0736357" y="-0.88184077" z="0.12280703" />
+                            <value x="-1" y="-1" z="-1" />
                         </Property>
                         <Property name="numSlicesPerCol" value="1" />
                         <Property name="numSlicesPerRow" value="1" />
