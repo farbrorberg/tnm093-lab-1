@@ -81,7 +81,17 @@ TNMParallelCoordinates::TNMParallelCoordinates()
 
 	//
     // Create AxisHandles here with a unique id
-    // _handles.push_back(AxisHandle(AxisHandle::AxisHandlePositionTop, 0, /* fix startposition */));
+    _handles.push_back(AxisHandle(AxisHandle::AxisHandlePositionBottom, 0, tgt::vec2(-1.f, -1.0f)));
+    _handles.push_back(AxisHandle(AxisHandle::AxisHandlePositionTop, 1, tgt::vec2(-1.f, 1.0f)));
+    
+     _handles.push_back(AxisHandle(AxisHandle::AxisHandlePositionBottom, 2, tgt::vec2(-1.0/3, -1.0f)));
+    _handles.push_back(AxisHandle(AxisHandle::AxisHandlePositionTop, 3, tgt::vec2(-1.0/3, 1.0f)));
+    
+     _handles.push_back(AxisHandle(AxisHandle::AxisHandlePositionBottom, 4, tgt::vec2(1.0/3, -1.0f)));
+    _handles.push_back(AxisHandle(AxisHandle::AxisHandlePositionTop, 5, tgt::vec2(1.0/3, 1.0f)));
+    
+     _handles.push_back(AxisHandle(AxisHandle::AxisHandlePositionBottom, 6, tgt::vec2(1.f, -1.0f)));
+    _handles.push_back(AxisHandle(AxisHandle::AxisHandlePositionTop, 7, tgt::vec2(1.f, 1.0f)));
     // ...
 	//
 }
