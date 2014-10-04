@@ -112,7 +112,7 @@ private:
 	// The id of the currently picked handle; necessary in the interaction between the
 	// mouseClick and the mouseMove methods to store the ID that was clicked
     int _pickedHandle;
-
+    
 	//
 	IndexProperty _brushingIndices;  // A list of voxel indices that should be ignored in the rendering
 	IndexProperty _linkingIndices; // A list of voxel indices that should be enhanced during rendering
