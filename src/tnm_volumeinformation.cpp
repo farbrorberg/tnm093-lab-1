@@ -72,7 +72,7 @@ void TNMVolumeInformation::process() {
 		//
 		// Retrieve the intensity using the 'VolumeUInt16's voxel method
 		float intensity = volume->voxel(_data->at(i).voxelIndex);
-
+		
 		_data->at(i).dataValues[0] = intensity;
 
 		//
@@ -144,13 +144,36 @@ void TNMVolumeInformation::process() {
 		gradient.y /= 2;
 		gradient.z /= 2;
 		
-		// is .size on tgt::vec3 correct? NO 
 		float gradientMagnitude = tgt::length(gradient);
 		
 		_data->at(i).dataValues[3] = gradientMagnitude;
 	    }
 	}
     }
+    
+    // normalize all data datavalues 
+    
+    // 1. Find min/max
+      
+    float max_values[NUM_DATA_VALUES] = {0.0f};
+    float min_values[NUM_DATA_VALUES] = {0.0f};
+    
+    for (int i = 0; i < (int) _data->size(); i++) {
+      for (int k = 0; k < NUM_DATA_VALUES; k++) {
+	max_values[k] = std::max(max_values[k], _data->at(i).dataValues[k]);
+	min_values[k] = std::min(min_values[k], _data->at(i).dataValues[k]);
+      }
+    }
+    
+    // 2. normalize!
+    for (int i = 0; i < (int) _data->size(); i++) {
+      for (int k = 0; k < NUM_DATA_VALUES; k++) {
+	_data->at(i).dataValues[k] = (_data->at(i).dataValues[k] - min_values[k])/(max_values[k] - min_values[k]);
+	
+	_data->at(i).dataValues[k] = (_data->at(i).dataValues[k] - 0.5) * 2;
+      }
+    }
+
 
     // sort the data by the voxel index for faster processing later
     std::sort(_data->begin(), _data->end(), sortByIndex);

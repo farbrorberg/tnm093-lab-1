@@ -144,7 +144,7 @@ void TNMParallelCoordinates::handleMouseClick(tgt::MouseEvent* e) {
     // id == -1 if no handle was clicked
     // Use the '_pickedIndex' member variable to store the picked index
 
-
+	_pickedHandle = handleId;
 
 	int lineId = -1;
 	// Derive the id of the line that was clicked based on the color scheme that you devised in the
@@ -171,16 +171,29 @@ void TNMParallelCoordinates::handleMouseMove(tgt::MouseEvent* e) {
     const tgt::vec2& normalizedDeviceCoordinates = (tgt::vec2(screenCoords) / tgt::vec2(_privatePort.getSize()) - 0.5f) * 2.f;
     
     
-    int handleId = static_cast<int>(pickingTexture->texelAsFloat(screenCoords).r * 255 - 1);
 
     // Move the stored index along its axis (if it is a valid picking point)
-    if(handleId > -1) {
-      tgt::vec2 newPosition = _handles.at(handleId)._position;
-      newPosition.y = normalizedDeviceCoordinates.y;
+    if(_pickedHandle > -1) {
+      tgt::vec2 newPosition = _handles.at(_pickedHandle)._position;
       
-      LINFOC("Picking", "Moving handle " << handleId << " to: " << newPosition);
+      if (_pickedHandle % 2 == 0) {
+	int oppositeHandleId = _pickedHandle + 1;
+	float oppositeHandlePos = _handles.at(oppositeHandleId)._position.y;
+	
+	newPosition.y = std::min(normalizedDeviceCoordinates.y, oppositeHandlePos);
+      } 
+      else {
+	int oppositeHandleId = _pickedHandle - 1;
+	float oppositeHandlePos = _handles.at(oppositeHandleId)._position.y;
+	
+	newPosition.y = std::max(normalizedDeviceCoordinates.y, oppositeHandlePos);
+      }
       
-      _handles.at(handleId).setPosition(newPosition);
+      
+      
+      LINFOC("Picking", "Moving handle " << _pickedHandle << " to: " << newPosition);
+      
+      _handles.at(_pickedHandle).setPosition(newPosition);
     }
     LINFOC("Picking", "Picked fff index: " << normalizedDeviceCoordinates);
 
@@ -188,13 +201,16 @@ void TNMParallelCoordinates::handleMouseMove(tgt::MouseEvent* e) {
 
 
 	_brushingIndices.set(_brushingList);
+	
+	// This re-renders the scene (which will call process in turn)
+	invalidate();
 
 }
 
 void TNMParallelCoordinates::handleMouseRelease(tgt::MouseEvent* e) {
  
-    // This re-renders the scene (which will call process in turn)
-    invalidate();
+    _pickedHandle = -1;
+    
 }
 
 void TNMParallelCoordinates::renderLines() {
@@ -206,18 +222,11 @@ void TNMParallelCoordinates::renderLines() {
  
   float x_width = 2.0f / (NUM_DATA_VALUES - 1);
   
-  float max_values[NUM_DATA_VALUES] = {0.0f};
-  
-  for (int i = 0; i < (int) data.size(); i++) {
-    for (int k = 0; k < NUM_DATA_VALUES; k++) {
-      max_values[k] = std::max(max_values[k], data.at(i).dataValues[k]);
-    }
-  }
-  
   for (int i = 0; i < (int) data.size(); i++) {
     bool check = true;
     for (int k = 0; k < NUM_DATA_VALUES; k++) {
-      float y_pos = ((data.at(i).dataValues[k]/max_values[k])-0.5f)*2;
+      //float y_pos = ((data.at(i).dataValues[k]/max_values[k])-0.5f)*2;
+      float y_pos = data.at(i).dataValues[k];
       if(!(y_pos > _handles.at(k*2)._position.y && y_pos < _handles.at(k*2 + 1)._position.y)) {
 	check = false;
       }
@@ -230,7 +239,8 @@ void TNMParallelCoordinates::renderLines() {
 	float x_pos = -1.0f;
 	
 	for (int k = 0; k < NUM_DATA_VALUES; k++) {
-	  float y_pos = ((data.at(i).dataValues[k]/max_values[k])-0.5f)*2;
+	  //float y_pos = ((data.at(i).dataValues[k]/max_values[k])-0.5f)*2;
+	  float y_pos = data.at(i).dataValues[k];
 	  glVertex2f(x_pos, y_pos);
 	  //glColor4f(0.0f, 0.0f, 1.0f, 0.01f);
 	  x_pos += x_width;

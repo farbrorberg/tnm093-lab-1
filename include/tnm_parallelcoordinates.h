@@ -119,6 +119,8 @@ private:
 
 	std::set<unsigned int> _brushingList; // The internal storage for the list of ignored voxels
 	std::set<unsigned int> _linkingList; // The internal storage for the list of selected voxels
+	
+	
 };
 
 } // namespace
