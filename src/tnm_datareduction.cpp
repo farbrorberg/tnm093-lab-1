@@ -28,22 +28,30 @@ void TNMDataReduction::process() {
     if (!_inport.hasData())
         return;
 
-	// We have checked above that there is data, so the dereferencing is safe
+    // We have checked above that there is data, so the dereferencing is safe
     const Data& inportData = *(_inport.getData());
     const float percentage = _percentage.get();
-
-	// Our new data
-	Data* outportData = new Data;
-    for (size_t i = 0; i < inportData.size(); ++i) {
-        const VoxelDataItem& item = inportData[i];
-
-        // Filter the 'inportData' based on the percentage and add it to 'outportData'
-
+    
+    // Our new data
+    Data* outportData = new Data;
+    
+    
+    LINFOC("Picking", "Filtering out " << percentage*100 << "% of " << inportData.size());
+    
+    float counter = (1.0f - percentage);
+    
+    for (size_t i = 0; i < inportData.size(); i++) {
+      if (counter > 1.0f) {
+	counter -= 1.0f;
+	const VoxelDataItem& item = inportData[i];
+	outportData->push_back(item);
+      }
+      counter += (1.0f - percentage);
     }
 
-	// sort the data by the voxel index for faster processing later
-	std::sort(outportData->begin(), outportData->end(), sortByIndex);
-	// Place the new data into the outport (and transferring ownership at the same time)
+    // sort the data by the voxel index for faster processing later
+    std::sort(outportData->begin(), outportData->end(), sortByIndex);
+    // Place the new data into the outport (and transferring ownership at the same time)
     _outport.setData(outportData);
 }
 
