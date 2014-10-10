@@ -170,8 +170,6 @@ void TNMParallelCoordinates::handleMouseMove(tgt::MouseEvent* e) {
     const tgt::ivec2 screenCoords = tgt::ivec2(e->coord().x, pickingTexture->getDimensions().y - e->coord().y);
     const tgt::vec2& normalizedDeviceCoordinates = (tgt::vec2(screenCoords) / tgt::vec2(_privatePort.getSize()) - 0.5f) * 2.f;
     
-    
-
     // Move the stored index along its axis (if it is a valid picking point)
     if(_pickedHandle > -1) {
       tgt::vec2 newPosition = _handles.at(_pickedHandle)._position;
@@ -189,21 +187,27 @@ void TNMParallelCoordinates::handleMouseMove(tgt::MouseEvent* e) {
 	newPosition.y = std::max(normalizedDeviceCoordinates.y, oppositeHandlePos);
       }
       
-      
-      
-      LINFOC("Picking", "Moving handle " << _pickedHandle << " to: " << newPosition);
-      
       _handles.at(_pickedHandle).setPosition(newPosition);
     }
-    LINFOC("Picking", "Picked fff index: " << normalizedDeviceCoordinates);
 
-	// update the _brushingList with the indices of the lines that are not rendered anymore
+    // update the _brushingList with the indices of the lines that are not rendered anymore
+    _brushingList.clear();
+    
+    const Data& data = *(_inport.getData());
+    
+    for (int i = 0; i < (int) data.size(); i++) {
+      for (int k = 0; k < NUM_DATA_VALUES; k++) {
+	float y_pos = data.at(i).dataValues[k];
+	if(!(y_pos > _handles.at(k*2)._position.y && y_pos < _handles.at(k*2 + 1)._position.y)) {
+	  _brushingList.insert(data.at(i).voxelIndex);
+	}
+      }
+    }
 
-
-	_brushingIndices.set(_brushingList);
-	
-	// This re-renders the scene (which will call process in turn)
-	invalidate();
+    _brushingIndices.set(_brushingList);
+    
+    // This re-renders the scene (which will call process in turn)
+    invalidate();
 
 }
 
@@ -214,43 +218,27 @@ void TNMParallelCoordinates::handleMouseRelease(tgt::MouseEvent* e) {
 }
 
 void TNMParallelCoordinates::renderLines() {
-	//
-	// Implement your line drawing
-	//
   const Data& data = *(_inport.getData());
-  LINFOC("Picking", "starting drawing");
  
   float x_width = 2.0f / (NUM_DATA_VALUES - 1);
   
   for (int i = 0; i < (int) data.size(); i++) {
-    bool check = true;
-    for (int k = 0; k < NUM_DATA_VALUES; k++) {
-      //float y_pos = ((data.at(i).dataValues[k]/max_values[k])-0.5f)*2;
-      float y_pos = data.at(i).dataValues[k];
-      if(!(y_pos > _handles.at(k*2)._position.y && y_pos < _handles.at(k*2 + 1)._position.y)) {
-	check = false;
+    if (_brushingList.find(data.at(i).voxelIndex) != _brushingList.end())
+      continue;
+    
+    glBegin(GL_LINE_STRIP);
+    
+      float x_pos = -1.0f;
+      
+      for (int k = 0; k < NUM_DATA_VALUES; k++) {
+	float y_pos = data.at(i).dataValues[k];
+	glVertex2f(x_pos, y_pos);
+	//glColor4f(0.0f, 0.0f, 1.0f, 0.01f);
+	x_pos += x_width;
       }
-    }
     
-    
-    if(check) {
-      glBegin(GL_LINE_STRIP);
-      
-	float x_pos = -1.0f;
-	
-	for (int k = 0; k < NUM_DATA_VALUES; k++) {
-	  //float y_pos = ((data.at(i).dataValues[k]/max_values[k])-0.5f)*2;
-	  float y_pos = data.at(i).dataValues[k];
-	  glVertex2f(x_pos, y_pos);
-	  //glColor4f(0.0f, 0.0f, 1.0f, 0.01f);
-	  x_pos += x_width;
-	}
-      
-      glEnd();
-    }
+    glEnd();
   }
-  
-  LINFOC("Picking", "done drawing");
 }
 
 void TNMParallelCoordinates::renderLinesPicking() {

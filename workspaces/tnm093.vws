@@ -43,11 +43,11 @@
                 <Processor type="Canvas" name="Canvas" id="ref1">
                     <MetaData>
                         <MetaItem name="ProcessorGraphicsItem" type="PositionMetaData" x="-150" y="261" />
-                        <MetaItem name="ProcessorWidget" type="WindowStateMetaData" visible="true" x="1335" y="356" width="536" height="525" />
+                        <MetaItem name="ProcessorWidget" type="WindowStateMetaData" visible="true" x="390" y="148" width="837" height="746" />
                     </MetaData>
                     <Properties>
                         <Property name="canvasSize">
-                            <value x="536" y="525" />
+                            <value x="837" y="746" />
                         </Property>
                         <Property name="showCursor" value="true" />
                     </Properties>
@@ -158,7 +158,7 @@
                             <value x="1" y="1" z="1" w="1" />
                         </Property>
                         <Property name="maximizeOnDoubleClick" value="true" />
-                        <Property name="maximized" value="1" />
+                        <Property name="maximized" value="0" />
                         <Property name="mouseEvent.maximize" lod="1" enabled="true" mouseAction="8" mouseButtons="1" keyCode="0" modifier="0" shareEvents="false" />
                         <Property name="mouseEvent.move" lod="1" enabled="true" mouseAction="103" mouseButtons="0" keyCode="0" modifier="0" shareEvents="false" />
                         <Property name="showGrid" value="true" />
@@ -300,7 +300,7 @@
                         <MetaItem name="ProcessorGraphicsItem" type="PositionMetaData" x="-232" y="-182" />
                     </MetaData>
                     <Properties>
-                        <Property name="percentage" value="0" />
+                        <Property name="percentage" value="0.99000001" />
                     </Properties>
                     <InteractionHandlers />
                 </Processor>
