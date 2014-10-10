@@ -66,6 +66,12 @@ TNMParallelCoordinates::TNMParallelCoordinates()
         this, &TNMParallelCoordinates::handleMouseClick,
         tgt::MouseEvent::MOUSE_BUTTON_LEFT, tgt::MouseEvent::CLICK, tgt::Event::MODIFIER_NONE);
     addEventProperty(_mouseClickEvent);
+    
+    _mouseClickEvent = new EventProperty<TNMParallelCoordinates>(
+        "mouse.rightclick", "Mouse Right Click",
+        this, &TNMParallelCoordinates::handleMouseClick,
+        tgt::MouseEvent::MOUSE_BUTTON_RIGHT, tgt::MouseEvent::CLICK, tgt::Event::MODIFIER_NONE);
+    addEventProperty(_mouseClickEvent);
 
     _mouseMoveEvent = new EventProperty<TNMParallelCoordinates>(
         "mouse.move", "Mouse Move",
@@ -144,25 +150,26 @@ void TNMParallelCoordinates::handleMouseClick(tgt::MouseEvent* e) {
     // id == -1 if no handle was clicked
     // Use the '_pickedIndex' member variable to store the picked index
 
-	_pickedHandle = handleId;
+    _pickedHandle = handleId;
+    
+    
+    // Derive the id of the line that was clicked based on the color scheme that you devised in the
+    // renderLinesPicking method
+    const Data& data = *(_inport.getData());
+    
+    int lineId = static_cast<int>(pickingTexture->texelAsFloat(screenCoords).g * data.size() * 255 - 1);
 
-	int lineId = -1;
-	// Derive the id of the line that was clicked based on the color scheme that you devised in the
-	// renderLinesPicking method
+    LINFOC("Picking", "Picked line index: " << lineId);
+    if (lineId != -1)
+	    // We want to add it only if a line was clicked
+	    _linkingList.insert(lineId);
 
-
-
-	LINFOC("Picking", "Picked line index: " << lineId);
-	if (lineId != -1)
-		// We want to add it only if a line was clicked
-		_linkingList.insert(lineId);
-
-	// if the right mouse button is pressed and no line is clicked, clear the list:
-	if ((e->button() == tgt::MouseEvent::MOUSE_BUTTON_RIGHT) && (lineId == -1))
-		_linkingList.clear();
-
-	// Make the list of selected indices available to the Scatterplot
-	_linkingIndices.set(_linkingList);
+    // if the right mouse button is pressed and no line is clicked, clear the list:
+    if ((e->button() == tgt::MouseEvent::MOUSE_BUTTON_RIGHT) && (lineId == -1))
+	    _linkingList.clear();
+    
+    // Make the list of selected indices available to the Scatterplot
+    _linkingIndices.set(_linkingList);
 }
 
 void TNMParallelCoordinates::handleMouseMove(tgt::MouseEvent* e) {
@@ -229,23 +236,49 @@ void TNMParallelCoordinates::renderLines() {
     glBegin(GL_LINE_STRIP);
     
       float x_pos = -1.0f;
+      if (_linkingList.find(data.at(i).voxelIndex) != _linkingList.end()) {
+	glColor4f(1.0f, 0.0f, 0.0f, 1.0f); 
+      }
+      else {
+	glColor4f(0.4f, 0.4f, 0.4f, 0.7f);
+      }
       
       for (int k = 0; k < NUM_DATA_VALUES; k++) {
 	float y_pos = data.at(i).dataValues[k];
 	glVertex2f(x_pos, y_pos);
-	//glColor4f(0.0f, 0.0f, 1.0f, 0.01f);
 	x_pos += x_width;
       }
-    
+      
     glEnd();
   }
 }
 
 void TNMParallelCoordinates::renderLinesPicking() {
-	// Use the same code to render lines (without duplicating it), but think of a way to encode the
-	// voxel identifier into the color. The red color channel is already occupied, so you have 3
-	// channels with 32-bit each at your disposal (green, blue, alpha)
+  // Use the same code to render lines (without duplicating it), but think of a way to encode the
+  // voxel identifier into the color. The red color channel is already occupied, so you have 3
+  // channels with 32-bit each at your disposal (green, blue, alpha)
 
+  const Data& data = *(_inport.getData());
+  
+  float x_width = 2.0f / (NUM_DATA_VALUES - 1);
+  
+  for (int i = 0; i < (int) data.size(); i++) {
+    if (_brushingList.find(data.at(i).voxelIndex) != _brushingList.end())
+      continue;
+    
+    float color = (data.at(i).voxelIndex + 1) / (data.size() * 255.f);
+    float x_pos = -1.0f;
+    
+    glBegin(GL_LINE_STRIP);
+      glColor4f(0.0f, color, 0.0f, 0.0f);
+      
+      for (int k = 0; k < NUM_DATA_VALUES; k++) {
+	float y_pos = data.at(i).dataValues[k];
+	glVertex2f(x_pos, y_pos);
+	x_pos += x_width;
+      }
+    glEnd();
+  }
 }
 
 void TNMParallelCoordinates::renderHandles() {
